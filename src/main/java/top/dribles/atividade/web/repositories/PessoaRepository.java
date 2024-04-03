@@ -26,6 +26,8 @@ public class PessoaRepository {
         this.conn = new ConnectionFactory().getConnection();
     }
     
+    public EnderecoRepository enderecoRepository = new EnderecoRepository();
+    
     public Pessoa getPessoaById(int id) throws SQLException {
         String query = "SELECT * FROM Pessoa WHERE ID = ?";
     
@@ -48,34 +50,36 @@ public class PessoaRepository {
         return null;
     }
     
-    public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
-        String query = 
-                "INSERT INTO Pessoa (ENDERECO_ID, NOME, EMAIL, TELEFONE, CPF) "
-                + "VALUES(?, ?, ?, ?, ?);";
+    public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
         
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-                
+        Endereco enderecoAdd = enderecoRepository.adicionarEndereco(endereco);
+        
         try {
-            ps = conn.prepareStatement(query, 
-                    Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, pessoa.getEndereco_id());
-            ps.setString(2, pessoa.getNome());
-            ps.setString(3, pessoa.getEmail());
-            ps.setString(4, pessoa.getTelefone());
-            ps.setString(5, pessoa.getCpf());
-            ps.executeUpdate();
+            if (enderecoAdd != null && endereco.getId() > 0) {
+                String query = 
+                    "INSERT INTO Pessoa (ENDERECO_ID, NOME, EMAIL, TELEFONE, CPF) "
+                    + "VALUES(?, ?, ?, ?, ?);";
             
-            rs = ps.getGeneratedKeys();
-            
-            rs.next();
-            pessoa.setId(rs.getInt(1));
-            
-        } finally {
-            if (rs != null)
-                rs.close();
-            if (ps != null)
-                ps.close();
+                try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, enderecoAdd.getId());
+                    ps.setString(2, pessoa.getNome());
+                    ps.setString(3, pessoa.getEmail());
+                    ps.setString(4, pessoa.getTelefone());
+                    ps.setString(5, pessoa.getCpf());
+                    ps.executeUpdate();
+                
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            pessoa.setId(rs.getInt(1));
+                        }
+                    }
+                } 
+            } else {
+                 throw new IllegalArgumentException("Erro ao inserir Endereco no banco de dados!");
+            }
+        } catch (SQLException e) {
+            // Manipule a exceção adequadamente
+            throw e;
         }
         
         return pessoa;

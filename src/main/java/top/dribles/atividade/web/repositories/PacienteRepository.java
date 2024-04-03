@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import top.dribles.atividade.web.infrastructure.ConnectionFactory;
 import top.dribles.atividade.web.model.Paciente;
 import top.dribles.atividade.web.model.Pessoa;
+import top.dribles.atividade.web.model.Endereco;
 
 /**
  *
@@ -24,6 +25,8 @@ public class PacienteRepository {
     public PacienteRepository() throws SQLException {
         this.conn = new ConnectionFactory().getConnection();
     }
+    
+    public PessoaRepository pessoaRepository = new PessoaRepository();
     
     public ArrayList<Paciente> getAllPacientes() throws SQLException {
         ArrayList<Paciente> pacientes = new ArrayList<>();
@@ -60,30 +63,29 @@ public class PacienteRepository {
         return null;
     }
     
-    public Paciente adicionarPaciente(Paciente paciente) throws SQLException {
-        String query = 
-                "INSERT INTO Paciente (PESSOA_ID) "
-                + "VALUES(?);";
+    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
         
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-                
+        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa, endereco);
+        
         try {
-            ps = conn.prepareStatement(query, 
-                    Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, paciente.getPessoa_id());
-            ps.executeUpdate();
-            
-            rs = ps.getGeneratedKeys();
-            
-            rs.next();
-            paciente.setId(rs.getInt(1));
-            
-        } finally {
-            if (rs != null)
-                rs.close();
-            if (ps != null)
-                ps.close();
+            if (pessoaAdd != null && pessoaAdd.getId() > 0) {
+                String query = "INSERT INTO Paciente (PESSOA_ID) VALUES (?);";
+
+                try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, pessoaAdd.getId());
+                    ps.executeUpdate();
+
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            paciente.setId(rs.getInt(1));
+                        }
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("Erro ao inserir Pessoa no banco de dados!");
+            }
+        } catch (SQLException e) {
+            throw e;
         }
         
         return paciente;

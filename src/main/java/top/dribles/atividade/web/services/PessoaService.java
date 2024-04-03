@@ -6,6 +6,7 @@ package top.dribles.atividade.web.services;
 
 import java.sql.SQLException;
 import top.dribles.atividade.web.model.Pessoa;
+import top.dribles.atividade.web.model.Endereco;
 import top.dribles.atividade.web.repositories.PessoaRepository;
 
 /**
@@ -23,11 +24,8 @@ public class PessoaService {
         return pessoaRepository.getPessoaById(id);
     }
     
-     public Pessoa adicionarPessoa(int endereco_id, String nome, String email, 
-            String telefone, String cpf) throws SQLException {
-        
-        Pessoa pessoa = new Pessoa(endereco_id, nome, email, telefone, cpf);
-        return pessoaRepository.adicionarPessoa(pessoa);
+     public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
+        return pessoaRepository.adicionarPessoa(pessoa, endereco);
     }
     
     public void atualizarPessoa(Pessoa pessoa, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {

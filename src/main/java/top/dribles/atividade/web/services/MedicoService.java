@@ -7,6 +7,8 @@ package top.dribles.atividade.web.services;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import top.dribles.atividade.web.model.Medico;
+import top.dribles.atividade.web.model.Pessoa;
+import top.dribles.atividade.web.model.Endereco;
 import top.dribles.atividade.web.repositories.MedicoRepository;
 
 /**
@@ -28,10 +30,8 @@ public class MedicoService {
         return medicoRepository.getMedicoById(id);
     }
     
-    public Medico adicionarMedico(int pessoa_id, int especialidade_id, String crm) throws SQLException {
-        
-        Medico medico = new Medico(pessoa_id, especialidade_id, crm);
-        return medicoRepository.adicionarMedico(medico);
+    public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
+        return medicoRepository.adicionarMedico(medico, pessoa, endereco);
     }
     
 //    public void atualizarMedico(Medico medico, String nome, String telefone, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {

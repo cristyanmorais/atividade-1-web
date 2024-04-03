@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import top.dribles.atividade.web.infrastructure.ConnectionFactory;
 import top.dribles.atividade.web.model.Medico;
 import top.dribles.atividade.web.model.Pessoa;
+import top.dribles.atividade.web.model.Endereco;
 
 /**
  *
@@ -24,6 +25,8 @@ public class MedicoRepository {
     public MedicoRepository() throws SQLException {
         this.conn = new ConnectionFactory().getConnection();
     }
+    
+    public PessoaRepository pessoaRepository = new PessoaRepository();
     
     public ArrayList<Medico> getAllMedicos() throws SQLException {
         ArrayList<Medico> medicos = new ArrayList<>();
@@ -66,32 +69,31 @@ public class MedicoRepository {
         return null;
     }
     
-    public Medico adicionarMedico(Medico medico) throws SQLException {
-        String query = 
-                "INSERT INTO Medico (PESSOA_ID, ESPECIALIDADE_ID, CRM) "
-                + "VALUES(?, ?, ?);";
+    public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
         
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-                
+        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa, endereco);
+        
         try {
-            ps = conn.prepareStatement(query, 
-                    Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, medico.getPessoa_id());
-            ps.setInt(2, medico.getEspecialidade_id());
-            ps.setString(3, medico.getCrm());
-            ps.executeUpdate();
-            
-            rs = ps.getGeneratedKeys();
-            
-            rs.next();
-            medico.setId(rs.getInt(1));
-            
-        } finally {
-            if (rs != null)
-                rs.close();
-            if (ps != null)
-                ps.close();
+            if (pessoaAdd != null && pessoaAdd.getId() > 0) {
+                String query = "INSERT INTO Medico (PESSOA_ID, ESPECIALIDADE_ID, CRM) VALUES (?, ?, ?);";
+
+                try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, pessoaAdd.getId());
+                    ps.setInt(2, medico.getEspecialidade_id());
+                    ps.setString(3, medico.getCrm());
+                    ps.executeUpdate();
+
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            medico.setId(rs.getInt(1));
+                        }
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("Erro ao inserir Pessoa no banco de dados!");
+            }
+        } catch (SQLException e) {
+            throw e;
         }
         
         return medico;
