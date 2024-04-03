@@ -82,14 +82,13 @@ public class PessoaRepository {
     }
     
     public void atualizarPessoa(Pessoa pessoa, String logradouro, String numero, 
-            String complemento, String bairro, String cidade, String uf, String cep) 
+            String complemento, String bairro, String cidade, String uf, String cep)
             throws SQLException {
         
         EnderecoRepository enderecoRepository = new EnderecoRepository();
         Endereco endereco = enderecoRepository.getEnderecoById(pessoa.getEndereco_id());
         
         if (endereco != null) {
-            // Atualiza os dados da pessoa
             endereco.setLogradouro(logradouro);
             endereco.setNumero(numero);
             endereco.setComplemento(complemento);

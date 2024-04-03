@@ -57,7 +57,7 @@ public class Medico {
         this.crm = crm;
     }
 
-    public boolean isIs_active() {
+    public boolean getIs_active() {
         return is_active;
     }
 

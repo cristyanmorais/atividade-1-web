@@ -42,7 +42,7 @@ public class Paciente {
         this.pessoa_id = pessoa_id;
     }
 
-    public boolean isIs_active() {
+    public boolean getIs_active() {
         return is_active;
     }
 
