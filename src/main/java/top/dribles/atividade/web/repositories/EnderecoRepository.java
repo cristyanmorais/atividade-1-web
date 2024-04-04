@@ -107,7 +107,7 @@ public class EnderecoRepository {
         return endereco;
     }
     
-    public boolean atualizarEndereco(Endereco endereco) throws SQLException {
+    public void atualizarEndereco(int idAtt, Endereco endereco) throws SQLException {
         String query = "UPDATE Endereco SET LOGRADOURO = ?, NUMERO = ?, "
                 + "COMPLEMENTO = ?, BAIRRO = ?, CIDADE = ?, UF = ?, CEP = ? "
                 + "WHERE ID = ?";
@@ -120,14 +120,12 @@ public class EnderecoRepository {
             ps.setString(5, endereco.getCidade());
             ps.setString(6, endereco.getUf());
             ps.setString(7, endereco.getCep());
-            ps.setInt(8, endereco.getId());
+            ps.setInt(8, idAtt);
         
             ps.executeUpdate();
         } catch (SQLException e) {
-            return false;
+            throw new IllegalArgumentException("Erro ao atuaizar Endereco no banco de dados!");
         }
-        
-        return true;
     }
     
     public void close() throws SQLException {

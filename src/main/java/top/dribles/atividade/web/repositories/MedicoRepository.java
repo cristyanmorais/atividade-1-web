@@ -30,7 +30,7 @@ public class MedicoRepository {
     
     public ArrayList<Medico> getAllMedicos() throws SQLException {
         ArrayList<Medico> medicos = new ArrayList<>();
-        String query = "SELECT * FROM Medico WHERE is_active = true;";
+        String query = "SELECT * FROM Medico WHERE is_active = true";
     
         try (PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery()) {
@@ -53,7 +53,7 @@ public class MedicoRepository {
     }
     
     public Medico getMedicoById(int id) throws SQLException {
-        String query = "SELECT * FROM Medico WHERE ID = ? AND is_active = true";
+        String query = "SELECT * FROM Medico WHERE ID = ?;";
     
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id);
@@ -64,9 +64,13 @@ public class MedicoRepository {
                     medico.setCrm(rs.getString("CRM"));
                     medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
                     
-                    Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa().getId());
-                    medico.setPessoa(pessoa);
-                
+//                    if(medico.getPessoa() != null) {
+                        Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
+                        medico.setPessoa(pessoa);
+//                    } else {
+//                        throw new IllegalArgumentException("Erro ao obter Pessoa!");
+//                    }
+                        
                     return medico;
                 } else {
                     throw new IllegalArgumentException("Médico não encontrado!");
@@ -76,8 +80,15 @@ public class MedicoRepository {
     }
     
     public Medico adicionarMedico(Medico medico) throws SQLException {
+        if (medico.getEspecialidade() == null || medico.getEspecialidade().getId() <= 0) {
+            throw new IllegalArgumentException("Especialidade inválida para o médico.");
+        }
+    
+        if (medico.getCrm() == null || medico.getCrm().isEmpty()) {
+            throw new IllegalArgumentException("CRM do médico é obrigatório.");
+        }
+    
         Pessoa pessoa = pessoaRepository.adicionarPessoa(medico.getPessoa());
-//        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa);
         
         try {
             if (pessoa != null && pessoa.getId() > 0) {
@@ -105,13 +116,11 @@ public class MedicoRepository {
         return medico;
     }
     
-    public void atualizarMedico(Medico medico) throws SQLException {
-        Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa().getId());
-        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa);
-    
-        if (!pessoaAtt) {
-            throw new IllegalArgumentException("Erro ao atualizar Médico no banco de dados!");
-        }
+    public void atualizarMedico(int idAtt, Medico medico) throws SQLException {
+        Medico medicoAtt = getMedicoById(idAtt);
+        int idPessoaAtt = medicoAtt.getPessoa().getId();
+        
+        pessoaRepository.atualizarPessoa(idPessoaAtt, medico.getPessoa());
     }
     
     public void deletarMedico(int id) throws SQLException {

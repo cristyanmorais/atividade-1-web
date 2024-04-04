@@ -28,7 +28,7 @@ public class PessoaService {
         return pessoaRepository.adicionarPessoa(pessoa);
     }
     
-    public void atualizarPessoa(Pessoa pessoa) throws SQLException {
-        pessoaRepository.atualizarPessoa(pessoa);
+    public void atualizarPessoa(int idAtt, Pessoa pessoa) throws SQLException {
+        pessoaRepository.atualizarPessoa(idAtt, pessoa);
     }
 }

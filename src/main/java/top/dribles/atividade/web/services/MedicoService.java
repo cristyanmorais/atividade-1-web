@@ -34,8 +34,8 @@ public class MedicoService {
         return medicoRepository.adicionarMedico(medico);
     }
     
-    public void atualizarMedico(Medico medico) throws SQLException {
-        medicoRepository.atualizarMedico(medico);
+    public void atualizarMedico(int idAtt, Medico medico) throws SQLException {
+        medicoRepository.atualizarMedico(idAtt, medico);
     }
     
     public void deletarMedico(int id) throws SQLException {

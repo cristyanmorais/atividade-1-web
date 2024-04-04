@@ -34,8 +34,8 @@ public class PacienteService {
         return pacienteRepository.adicionarPaciente(paciente);
     }
     
-    public void atualizarPaciente(Paciente paciente) throws SQLException {
-        pacienteRepository.atualizarPaciente(paciente);
+    public void atualizarPaciente(int idAtt, Paciente paciente) throws SQLException {
+        pacienteRepository.atualizarPaciente(idAtt, paciente);
     }
     
     public void deletarPaciente(int id) throws SQLException {

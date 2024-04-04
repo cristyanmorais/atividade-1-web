@@ -74,7 +74,6 @@ public class PacienteRepository {
     
     public Paciente adicionarPaciente(Paciente paciente) throws SQLException {
         Pessoa pessoa = pessoaRepository.adicionarPessoa(paciente.getPessoa());
-//        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa, endereco);
         
         try {
             if (pessoa != null && pessoa.getId() > 0) {
@@ -100,13 +99,11 @@ public class PacienteRepository {
         return paciente;
     }
     
-    public void atualizarPaciente(Paciente paciente) throws SQLException {
-        Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
-        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa);
-    
-        if (!pessoaAtt) {
-            throw new IllegalArgumentException("Erro ao atualizar Paciente no banco de dados!");
-        }
+    public void atualizarPaciente(int idAtt, Paciente paciente) throws SQLException {
+        Paciente pacienteAtt = getPacienteById(idAtt);
+        int idPessoaAtt = pacienteAtt.getPessoa().getId();
+        
+        pessoaRepository.atualizarPessoa(idPessoaAtt, paciente.getPessoa());
     }
     
     public void deletarPaciente(int id) throws SQLException {

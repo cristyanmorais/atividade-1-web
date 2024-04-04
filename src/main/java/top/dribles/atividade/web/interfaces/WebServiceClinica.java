@@ -29,7 +29,7 @@ public interface WebServiceClinica {
     Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException;
     
     @WebMethod
-    void atualizarPessoa(Pessoa pessoa) throws SQLException;
+    void atualizarPessoa(int idAtt, Pessoa pessoa) throws SQLException;
     
 //  ----------------------------  Medico  -------------------------------------
     
@@ -43,7 +43,7 @@ public interface WebServiceClinica {
     public Medico adicionarMedico(Medico medico) throws SQLException;
     
     @WebMethod
-    public void atualizarMedico(Medico medico) throws SQLException;
+    public void atualizarMedico(int idAtt, Medico medico) throws SQLException;
     
     @WebMethod
     public void deletarMedico(int id) throws SQLException;
@@ -60,7 +60,7 @@ public interface WebServiceClinica {
     public Paciente adicionarPaciente(Paciente paciente) throws SQLException;
     
     @WebMethod
-    public void atualizarPaciente(Paciente paciente) throws SQLException;
+    public void atualizarPaciente(int idAtt, Paciente paciente) throws SQLException;
     
     @WebMethod
     public void deletarPaciente(int id) throws SQLException;
@@ -77,7 +77,7 @@ public interface WebServiceClinica {
     Endereco adicionarEndereco(Endereco endereco) throws SQLException;
     
     @WebMethod
-    void atualizarEndereco(Endereco endereco) throws SQLException;
+    void atualizarEndereco(int idAtt, Endereco endereco) throws SQLException;
     
 //  --------------------------  Especialidade  --------------------------------
     

@@ -35,7 +35,7 @@ public class EnderecoService {
         return enderecoRepository.adicionarEndereco(endereco);
     }
     
-    public void atualizarEndereco(Endereco endereco) throws SQLException {
-        enderecoRepository.atualizarEndereco(endereco);
+    public void atualizarEndereco(int idAtt, Endereco endereco) throws SQLException {
+        enderecoRepository.atualizarEndereco(idAtt, endereco);
     }
 }

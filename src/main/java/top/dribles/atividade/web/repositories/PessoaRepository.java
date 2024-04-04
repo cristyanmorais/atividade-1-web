@@ -42,20 +42,35 @@ public class PessoaRepository {
                     pessoa.setTelefone(rs.getString("TELEFONE"));
                     pessoa.setCpf(rs.getString("CPF"));
                     
-                    Endereco endereco = enderecoRepository.getEnderecoById(pessoa.getEndereco().getId());
+                    Endereco endereco = enderecoRepository.getEnderecoById(rs.getInt("ENDERECO_ID"));
                     pessoa.setEndereco(endereco);
                     
                     return pessoa;
                 } else {
-                    throw new IllegalArgumentException("Pessoa não encontrado!");
+                    throw new IllegalArgumentException("Pessoa nao encontrada!");
                 }
             }
         }
     }
     
     public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
+        if (pessoa.getNome() == null || pessoa.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome é obrigatório.");
+        }
+        
+        if (pessoa.getEmail() == null || pessoa.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email é obrigatório.");
+        }
+        
+        if (pessoa.getTelefone() == null || pessoa.getTelefone().isEmpty()) {
+            throw new IllegalArgumentException("Telefone é obrigatório.");
+        }
+        
+        if (pessoa.getCpf() == null || pessoa.getCpf().isEmpty()) {
+            throw new IllegalArgumentException("Cpf é obrigatório.");
+        }
+        
         Endereco endereco= enderecoRepository.adicionarEndereco(pessoa.getEndereco());
-//        Endereco enderecoAdd = enderecoRepository.adicionarEndereco(endereco);
         
         try {
             if (endereco != null && endereco.getId() > 0) {
@@ -87,27 +102,26 @@ public class PessoaRepository {
         return pessoa;
     }
     
-    public boolean atualizarPessoa(Pessoa pessoa) throws SQLException {
-        Endereco endereco = enderecoRepository.getEnderecoById(pessoa.getEndereco().getId());
-        boolean enderecoAtt = enderecoRepository.atualizarEndereco(endereco);
+    public void atualizarPessoa(int idAtt, Pessoa pessoa) throws SQLException {
+//        Endereco endereco = enderecoRepository.getEnderecoById(pessoa.getEndereco().getId());
+//        enderecoRepository.atualizarEndereco(endereco);
+
+        Pessoa pessoaAtt = getPessoaById(idAtt);
+        int idEnderecoAtt = pessoaAtt.getEndereco().getId();
+        
+        enderecoRepository.atualizarEndereco(idEnderecoAtt, pessoa.getEndereco());
         
         String query = "UPDATE Pessoa SET NOME = ?, TELEFONE = ? WHERE ID = ?";
         
-        if (enderecoAtt) {
-            try (PreparedStatement ps = conn.prepareStatement(query)) {
-                ps.setString(1, pessoa.getNome());
-                ps.setString(2, pessoa.getTelefone());
-                ps.setInt(3, pessoa.getId());
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, pessoa.getNome());
+            ps.setString(2, pessoa.getTelefone());
+            ps.setInt(3, idAtt);
         
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                return false;
-            }
-        } else {
-            return false;
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao inserir Pessoa no banco de dados!");
         }
-        
-        return true;
     }
     
     public void close() throws SQLException {

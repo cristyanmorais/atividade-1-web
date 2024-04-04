@@ -53,8 +53,8 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public void atualizarPessoa(Pessoa pessoa) throws SQLException {
-        pessoaService.atualizarPessoa(pessoa);
+    public void atualizarPessoa(int idAtt, Pessoa pessoa) throws SQLException {
+        pessoaService.atualizarPessoa(idAtt, pessoa);
     }
     
 //  ------------------------------  Medico  -----------------------------------
@@ -75,8 +75,8 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public void atualizarMedico(Medico medico) throws SQLException {
-        medicoService.atualizarMedico(medico);
+    public void atualizarMedico(int idAtt, Medico medico) throws SQLException {
+        medicoService.atualizarMedico(idAtt, medico);
     }
     
     @Override
@@ -102,8 +102,8 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public void atualizarPaciente(Paciente paciente) throws SQLException {
-        pacienteService.atualizarPaciente(paciente);
+    public void atualizarPaciente(int idAtt, Paciente paciente) throws SQLException {
+        pacienteService.atualizarPaciente(idAtt, paciente);
     }
     
     @Override
@@ -131,8 +131,8 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public void atualizarEndereco(Endereco endereco) throws SQLException {
-        enderecoService.atualizarEndereco(endereco);
+    public void atualizarEndereco(int idAtt, Endereco endereco) throws SQLException {
+        enderecoService.atualizarEndereco(idAtt, endereco);
     }
     
 //  --------------------------  Especialidade  --------------------------------
