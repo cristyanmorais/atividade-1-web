@@ -10,19 +10,19 @@ package top.dribles.atividade.web.model;
  */
 public class Paciente {
     private int id;
-    private int pessoa_id;
+    private Pessoa pessoa;
     private boolean is_active;
 
     public Paciente() {
         
     }
 
-    public Paciente(int pessoa_id) {
-        this.pessoa_id = pessoa_id;
+    public Paciente(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
-    public Paciente(int pessoa_id, boolean is_active) {
-        this.pessoa_id = pessoa_id;
+    public Paciente(Pessoa pessoa, boolean is_active) {
+        this.pessoa = pessoa;
         this.is_active = is_active;
     }
 
@@ -34,12 +34,12 @@ public class Paciente {
         this.id = id;
     }
 
-    public int getPessoa_id() {
-        return pessoa_id;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setPessoa_id(int pessoa_id) {
-        this.pessoa_id = pessoa_id;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public boolean getIs_active() {

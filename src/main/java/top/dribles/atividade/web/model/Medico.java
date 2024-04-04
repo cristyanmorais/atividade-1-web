@@ -10,8 +10,8 @@ package top.dribles.atividade.web.model;
  */
 public class Medico {
     private int id;
-    private int pessoa_id;
-    private int especialidade_id;
+    private Pessoa pessoa;
+    private Especialidade especialidade;
     private String crm;
     private boolean is_active;
 
@@ -19,9 +19,9 @@ public class Medico {
         
     }
 
-    public Medico(int pessoa_id, int especialidade_id, String crm) {
-        this.pessoa_id = pessoa_id;
-        this.especialidade_id = especialidade_id;
+    public Medico(Pessoa pessoa, Especialidade especialidade, String crm) {
+        this.pessoa = pessoa;
+        this.especialidade = especialidade;
         this.crm = crm;
     }
 
@@ -33,20 +33,20 @@ public class Medico {
         this.id = id;
     }
 
-    public int getPessoa_id() {
-        return pessoa_id;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setPessoa_id(int pessoa_id) {
-        this.pessoa_id = pessoa_id;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
-    public int getEspecialidade_id() {
-        return especialidade_id;
+    public Especialidade getEspecialidade() {
+        return especialidade;
     }
 
-    public void setEspecialidade_id(int especialidade_id) {
-        this.especialidade_id = especialidade_id;
+    public void setEspecialidade(Especialidade especialidade) {
+        this.especialidade = especialidade;
     }
 
     public String getCrm() {

@@ -28,7 +28,7 @@ public class PessoaService {
         return pessoaRepository.adicionarPessoa(pessoa, endereco);
     }
     
-    public void atualizarPessoa(Pessoa pessoa, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {
-        pessoaRepository.atualizarPessoa(pessoa, logradouro, numero, complemento, bairro, cidade, uf, cep);
+    public void atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
+        pessoaRepository.atualizarPessoa(pessoa, endereco);
     }
 }

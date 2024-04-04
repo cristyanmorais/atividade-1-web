@@ -37,8 +37,14 @@ public class PacienteRepository {
             while (rs.next()) {
                 Paciente paciente = new Paciente();
                 paciente.setId(rs.getInt("ID"));
-                paciente.setPessoa_id(rs.getInt("PESSOA_ID"));
+                
+                Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
+                paciente.setPessoa(pessoa);
+                
+                pacientes.add(paciente);
             }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao Buscar Pacientes!");
         }
     
         return pacientes;
@@ -53,14 +59,17 @@ public class PacienteRepository {
                 if (rs.next()) {
                     Paciente paciente = new Paciente();
                     paciente.setId(rs.getInt("ID"));
-                    paciente.setPessoa_id(rs.getInt("PESSOA_ID"));
                     paciente.setIs_active(rs.getBoolean("IS_ACTIVE"));
+                    
+                    Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
+                    paciente.setPessoa(pessoa);
+                
                     return paciente;
+                }else {
+                    throw new IllegalArgumentException("Paciente não encontrado!");
                 }
             }
         }
-    
-        return null;
     }
     
     public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
@@ -91,24 +100,13 @@ public class PacienteRepository {
         return paciente;
     }
     
-//    public void atualizarPaciente(Paciente paciente) throws SQLException {
-//        String query = "UPDATE Endereco SET LOGRADOURO = ?, NUMERO = ?, "
-//                + "COMPLEMENTO = ?, BAIRRO = ?, CIDADE = ?, UF = ?, CEP = ? "
-//                + "WHERE ID = ?";
-//    
-//        try (PreparedStatement ps = conn.prepareStatement(query)) {
-//            ps.setString(1, endereco.getLogradouro());
-//            ps.setString(2, endereco.getNumero());
-//            ps.setString(3, endereco.getComplemento());
-//            ps.setString(4, endereco.getBairro());
-//            ps.setString(5, endereco.getCidade());
-//            ps.setString(6, endereco.getUf());
-//            ps.setString(7, endereco.getCep());
-//            ps.setInt(8, endereco.getId());
-//        
-//            ps.executeUpdate();
-//        }
-//    }
+    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
+        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa, endereco);
+    
+        if (!pessoaAtt) {
+            throw new IllegalArgumentException("Erro ao atualizar Paciente no banco de dados!");
+        }
+    }
     
     public void deletarPaciente(int id) throws SQLException {
         String query = "UPDATE Paciente SET IS_ACTIVE = false "

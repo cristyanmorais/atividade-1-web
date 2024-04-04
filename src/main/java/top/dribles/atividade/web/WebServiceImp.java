@@ -48,14 +48,13 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
-        return pessoaService.adicionarPessoa(pessoa.getEndereco_id(), pessoa.getNome(), 
-                pessoa.getEmail(), pessoa.getTelefone(), pessoa.getCpf());
+    public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
+        return pessoaService.adicionarPessoa(pessoa, endereco);
     }
     
     @Override
-    public void atualizarPessoa(Pessoa pessoa, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {
-        pessoaService.atualizarPessoa(pessoa, logradouro, numero, complemento, bairro, cidade, uf, cep);
+    public void atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
+        pessoaService.atualizarPessoa(pessoa, endereco);
     }
     
 //  ------------------------------  Medico  -----------------------------------
@@ -71,16 +70,14 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Medico adicionarMedico(int pessoa_id, int especialidade_id, String crm) throws SQLException {
-        
-        Medico medico = new Medico(pessoa_id, especialidade_id, crm);
-        return medicoService.adicionarMedico(medico.getPessoa_id(), medico.getEspecialidade_id(), medico.getCrm());
+    public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
+        return medicoService.adicionarMedico(medico, pessoa, endereco);
     }
     
-//    @Override
-//    public void atualizarMedico(Medico medico, String nome, String telefone, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {
-//        medicoService.atualizarMedico(medico, nome, telefone, logradouro, numero, complemento, bairro, cidade, uf, cep);
-//    }
+    @Override
+    public void atualizarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
+        medicoService.atualizarMedico(medico, pessoa, endereco);
+    }
     
     @Override
     public void deletarMedico(int id) throws SQLException {
@@ -100,16 +97,14 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Paciente adicionarPaciente(int pessoa_id) throws SQLException {
-        
-        Paciente paciente = new Paciente(pessoa_id);
-        return pacienteService.adicionarPaciente(paciente.getPessoa_id());
+    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
+        return pacienteService.adicionarPaciente(paciente, pessoa, endereco);
     }
     
-//    @Override
-//    public void atualizarPaciente(Paciente paciente) throws SQLException {
-//        medicoService.atualizarPaciente(paciente);
-//    }
+    @Override
+    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
+        pacienteService.atualizarPaciente(paciente, pessoa, endereco);
+    }
     
     @Override
     public void deletarPaciente(int id) throws SQLException {

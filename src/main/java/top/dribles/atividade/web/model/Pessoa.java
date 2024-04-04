@@ -10,7 +10,7 @@ package top.dribles.atividade.web.model;
  */
 public class Pessoa {
     private int id;
-    private int endereco_id;
+    private Endereco endereco;
     private String nome;
     private String email;
     private String telefone;
@@ -20,8 +20,8 @@ public class Pessoa {
         
     }
 
-    public Pessoa(int endereco_id, String nome, String email, String telefone, String cpf) {
-        this.endereco_id = endereco_id;
+    public Pessoa(Endereco endereco, String nome, String email, String telefone, String cpf) {
+        this.endereco = endereco;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
@@ -36,12 +36,12 @@ public class Pessoa {
         this.id = id;
     }
 
-    public int getEndereco_id() {
-        return endereco_id;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public void setEndereco_id(int endereco_id) {
-        this.endereco_id = endereco_id;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
     public String getNome() {

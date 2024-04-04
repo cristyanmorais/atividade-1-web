@@ -107,7 +107,7 @@ public class EnderecoRepository {
         return endereco;
     }
     
-    public void atualizarEndereco(Endereco endereco) throws SQLException {
+    public boolean atualizarEndereco(Endereco endereco) throws SQLException {
         String query = "UPDATE Endereco SET LOGRADOURO = ?, NUMERO = ?, "
                 + "COMPLEMENTO = ?, BAIRRO = ?, CIDADE = ?, UF = ?, CEP = ? "
                 + "WHERE ID = ?";
@@ -123,7 +123,11 @@ public class EnderecoRepository {
             ps.setInt(8, endereco.getId());
         
             ps.executeUpdate();
+        } catch (SQLException e) {
+            return false;
         }
+        
+        return true;
     }
     
     public void close() throws SQLException {

@@ -1,7 +1,9 @@
 top\dribles\atividade\web\services\PacienteService.class
 top\dribles\atividade\web\services\MedicoService.class
 top\dribles\atividade\web\repositories\EspecialidadeRepository.class
+top\dribles\atividade\web\model\Consulta.class
 top\dribles\atividade\web\services\EspecialidadeService.class
+top\dribles\atividade\web\repositories\ConsultaRepository.class
 top\dribles\atividade\web\repositories\MedicoRepository.class
 top\dribles\atividade\web\model\Especialidade.class
 top\dribles\atividade\web\infrastructure\ConnectionFactory.class

@@ -34,9 +34,9 @@ public class MedicoService {
         return medicoRepository.adicionarMedico(medico, pessoa, endereco);
     }
     
-//    public void atualizarMedico(Medico medico, String nome, String telefone, String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) throws SQLException {
-//        medicoRepository.atualizarMedico(medico, nome, telefone, logradouro, numero, complemento, bairro, cidade, uf, cep);
-//    }
+    public void atualizarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
+        medicoRepository.atualizarMedico(medico, pessoa, endereco);
+    }
     
     public void deletarMedico(int id) throws SQLException {
         medicoRepository.deletarMedico(id);

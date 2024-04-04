@@ -30,26 +30,30 @@ public class MedicoRepository {
     
     public ArrayList<Medico> getAllMedicos() throws SQLException {
         ArrayList<Medico> medicos = new ArrayList<>();
-        String query = "SELECT * FROM Medico";
+        String query = "SELECT * FROM Medico WHERE is_active = true;";
     
         try (PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Medico medico = new Medico();
                 medico.setId(rs.getInt("ID"));
-                medico.setPessoa_id(rs.getInt("PESSOA_ID"));
-                medico.setEspecialidade_id(rs.getInt("ESPECIALIDADE_ID"));
                 medico.setCrm(rs.getString("CRM"));
                 medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
+                
+                Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa().getId());
+                medico.setPessoa(pessoa);
+                
                 medicos.add(medico);
             }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao Buscar Medicos!");
         }
     
         return medicos;
     }
     
     public Medico getMedicoById(int id) throws SQLException {
-        String query = "SELECT * FROM Medico WHERE ID = ?";
+        String query = "SELECT * FROM Medico WHERE ID = ? AND is_active = true";
     
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id);
@@ -57,16 +61,18 @@ public class MedicoRepository {
                 if (rs.next()) {
                     Medico medico = new Medico();
                     medico.setId(rs.getInt("ID"));
-                    medico.setPessoa_id(rs.getInt("PESSOA_ID"));
-                    medico.setEspecialidade_id(rs.getInt("ESPECIALIDADE_ID"));
                     medico.setCrm(rs.getString("CRM"));
                     medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
+                    
+                    Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa().getId());
+                    medico.setPessoa(pessoa);
+                
                     return medico;
+                } else {
+                    throw new IllegalArgumentException("Médico não encontrado!");
                 }
             }
         }
-    
-        return null;
     }
     
     public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
@@ -79,7 +85,7 @@ public class MedicoRepository {
 
                 try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setInt(1, pessoaAdd.getId());
-                    ps.setInt(2, medico.getEspecialidade_id());
+                    ps.setInt(2, medico.getEspecialidade().getId());
                     ps.setString(3, medico.getCrm());
                     ps.executeUpdate();
 
@@ -99,21 +105,13 @@ public class MedicoRepository {
         return medico;
     }
     
-//    public void atualizarMedico(Medico medico, 
-//            String nome, String telefone, 
-//            String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep) 
-//            throws SQLException {
-//        
-//        PessoaRepository pessoaRepository = new PessoaRepository();
-//        Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa_id());
-//    
-//        if (pessoa != null) {
-//            pessoa.setNome(nome);
-//            pessoa.setTelefone(telefone);
-//        
-//            pessoaRepository.atualizarPessoa(pessoa, logradouro, numero, complemento, bairro, cidade, uf, cep);
-//        }
-//    }
+    public void atualizarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
+        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa, endereco);
+    
+        if (!pessoaAtt) {
+            throw new IllegalArgumentException("Erro ao atualizar Médico no banco de dados!");
+        }
+    }
     
     public void deletarMedico(int id) throws SQLException {
         String query = "UPDATE Medico SET IS_ACTIVE = false "
@@ -123,6 +121,8 @@ public class MedicoRepository {
             ps.setInt(1, id);
             
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao deletar Médico!");
         }
     }
     
