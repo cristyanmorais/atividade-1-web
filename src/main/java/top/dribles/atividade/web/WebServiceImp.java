@@ -48,13 +48,13 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
-        return pessoaService.adicionarPessoa(pessoa, endereco);
+    public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
+        return pessoaService.adicionarPessoa(pessoa);
     }
     
     @Override
-    public void atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
-        pessoaService.atualizarPessoa(pessoa, endereco);
+    public void atualizarPessoa(Pessoa pessoa) throws SQLException {
+        pessoaService.atualizarPessoa(pessoa);
     }
     
 //  ------------------------------  Medico  -----------------------------------
@@ -70,13 +70,13 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
-        return medicoService.adicionarMedico(medico, pessoa, endereco);
+    public Medico adicionarMedico(Medico medico) throws SQLException {
+        return medicoService.adicionarMedico(medico);
     }
     
     @Override
-    public void atualizarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException {
-        medicoService.atualizarMedico(medico, pessoa, endereco);
+    public void atualizarMedico(Medico medico) throws SQLException {
+        medicoService.atualizarMedico(medico);
     }
     
     @Override
@@ -97,13 +97,13 @@ public class WebServiceImp implements WebServiceClinica{
     }
     
     @Override
-    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        return pacienteService.adicionarPaciente(paciente, pessoa, endereco);
+    public Paciente adicionarPaciente(Paciente paciente) throws SQLException {
+        return pacienteService.adicionarPaciente(paciente);
     }
     
     @Override
-    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        pacienteService.atualizarPaciente(paciente, pessoa, endereco);
+    public void atualizarPaciente(Paciente paciente) throws SQLException {
+        pacienteService.atualizarPaciente(paciente);
     }
     
     @Override

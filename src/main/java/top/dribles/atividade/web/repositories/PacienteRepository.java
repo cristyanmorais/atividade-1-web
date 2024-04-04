@@ -72,16 +72,16 @@ public class PacienteRepository {
         }
     }
     
-    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        
-        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa, endereco);
+    public Paciente adicionarPaciente(Paciente paciente) throws SQLException {
+        Pessoa pessoa = pessoaRepository.adicionarPessoa(paciente.getPessoa());
+//        Pessoa pessoaAdd = pessoaRepository.adicionarPessoa(pessoa, endereco);
         
         try {
-            if (pessoaAdd != null && pessoaAdd.getId() > 0) {
+            if (pessoa != null && pessoa.getId() > 0) {
                 String query = "INSERT INTO Paciente (PESSOA_ID) VALUES (?);";
 
                 try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setInt(1, pessoaAdd.getId());
+                    ps.setInt(1, pessoa.getId());
                     ps.executeUpdate();
 
                     try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -100,8 +100,9 @@ public class PacienteRepository {
         return paciente;
     }
     
-    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa, endereco);
+    public void atualizarPaciente(Paciente paciente) throws SQLException {
+        Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
+        boolean pessoaAtt = pessoaRepository.atualizarPessoa(pessoa);
     
         if (!pessoaAtt) {
             throw new IllegalArgumentException("Erro ao atualizar Paciente no banco de dados!");

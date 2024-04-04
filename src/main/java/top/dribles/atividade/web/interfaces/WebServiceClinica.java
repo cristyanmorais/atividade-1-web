@@ -26,10 +26,10 @@ public interface WebServiceClinica {
     Pessoa getPessoaById(int id) throws SQLException;
     
     @WebMethod
-    Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException;
+    Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException;
     
     @WebMethod
-    void atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException;
+    void atualizarPessoa(Pessoa pessoa) throws SQLException;
     
 //  ----------------------------  Medico  -------------------------------------
     
@@ -40,10 +40,10 @@ public interface WebServiceClinica {
     public Medico getMedicoById(int id) throws SQLException;
     
     @WebMethod
-    public Medico adicionarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException;
+    public Medico adicionarMedico(Medico medico) throws SQLException;
     
     @WebMethod
-    public void atualizarMedico(Medico medico, Pessoa pessoa, Endereco endereco) throws SQLException;
+    public void atualizarMedico(Medico medico) throws SQLException;
     
     @WebMethod
     public void deletarMedico(int id) throws SQLException;
@@ -57,10 +57,10 @@ public interface WebServiceClinica {
     public Paciente getPacienteById(int id) throws SQLException;
     
     @WebMethod
-    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException;
+    public Paciente adicionarPaciente(Paciente paciente) throws SQLException;
     
     @WebMethod
-    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException;
+    public void atualizarPaciente(Paciente paciente) throws SQLException;
     
     @WebMethod
     public void deletarPaciente(int id) throws SQLException;

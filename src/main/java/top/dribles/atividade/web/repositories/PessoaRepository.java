@@ -53,18 +53,18 @@ public class PessoaRepository {
         }
     }
     
-    public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
-        
-        Endereco enderecoAdd = enderecoRepository.adicionarEndereco(endereco);
+    public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
+        Endereco endereco= enderecoRepository.adicionarEndereco(pessoa.getEndereco());
+//        Endereco enderecoAdd = enderecoRepository.adicionarEndereco(endereco);
         
         try {
-            if (enderecoAdd != null && endereco.getId() > 0) {
+            if (endereco != null && endereco.getId() > 0) {
                 String query = 
                     "INSERT INTO Pessoa (ENDERECO_ID, NOME, EMAIL, TELEFONE, CPF) "
                     + "VALUES(?, ?, ?, ?, ?);";
             
                 try (PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                    ps.setInt(1, enderecoAdd.getId());
+                    ps.setInt(1, endereco.getId());
                     ps.setString(2, pessoa.getNome());
                     ps.setString(3, pessoa.getEmail());
                     ps.setString(4, pessoa.getTelefone());
@@ -87,7 +87,8 @@ public class PessoaRepository {
         return pessoa;
     }
     
-    public boolean atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
+    public boolean atualizarPessoa(Pessoa pessoa) throws SQLException {
+        Endereco endereco = enderecoRepository.getEnderecoById(pessoa.getEndereco().getId());
         boolean enderecoAtt = enderecoRepository.atualizarEndereco(endereco);
         
         String query = "UPDATE Pessoa SET NOME = ?, TELEFONE = ? WHERE ID = ?";

@@ -30,12 +30,12 @@ public class PacienteService {
         return pacienteRepository.getPacienteById(id);
     }
     
-    public Paciente adicionarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        return pacienteRepository.adicionarPaciente(paciente, pessoa, endereco);
+    public Paciente adicionarPaciente(Paciente paciente) throws SQLException {
+        return pacienteRepository.adicionarPaciente(paciente);
     }
     
-    public void atualizarPaciente(Paciente paciente, Pessoa pessoa, Endereco endereco) throws SQLException {
-        pacienteRepository.atualizarPaciente(paciente, pessoa, endereco);
+    public void atualizarPaciente(Paciente paciente) throws SQLException {
+        pacienteRepository.atualizarPaciente(paciente);
     }
     
     public void deletarPaciente(int id) throws SQLException {

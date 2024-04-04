@@ -24,11 +24,11 @@ public class PessoaService {
         return pessoaRepository.getPessoaById(id);
     }
     
-     public Pessoa adicionarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
-        return pessoaRepository.adicionarPessoa(pessoa, endereco);
+     public Pessoa adicionarPessoa(Pessoa pessoa) throws SQLException {
+        return pessoaRepository.adicionarPessoa(pessoa);
     }
     
-    public void atualizarPessoa(Pessoa pessoa, Endereco endereco) throws SQLException {
-        pessoaRepository.atualizarPessoa(pessoa, endereco);
+    public void atualizarPessoa(Pessoa pessoa) throws SQLException {
+        pessoaRepository.atualizarPessoa(pessoa);
     }
 }
