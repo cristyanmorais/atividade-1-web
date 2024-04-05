@@ -4,6 +4,9 @@
  */
 package top.dribles.atividade.web.model;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -15,17 +18,19 @@ public class Consulta {
     private int medico_id;
     private int paciente_id;
     private int motivo_cancelamento_id;
-    private Date data_hora;
+    private Date data;
+    private String horario;
 
     public Consulta() {
         
     }
 
-    public Consulta(int medico_id, int paciente_id, int motivo_cancelamento_id, Date data_hora) {
+    public Consulta(int medico_id, int paciente_id, int motivo_cancelamento_id, Date data, String horario) {
         this.medico_id = medico_id;
         this.paciente_id = paciente_id;
         this.motivo_cancelamento_id = motivo_cancelamento_id;
-        this.data_hora = data_hora;
+        this.data = data;
+        this.horario = horario;
     }
 
     public int getId() {
@@ -60,11 +65,19 @@ public class Consulta {
         this.motivo_cancelamento_id = motivo_cancelamento_id;
     }
 
-    public Date getData_hora() {
-        return data_hora;
+    public Date getData() {
+        return data;
     }
 
-    public void setData_hora(Date data_hora) {
-        this.data_hora = data_hora;
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public String getHorario() {
+        return horario;
+    }
+
+    public void setHorario(String horario) {
+        this.horario = horario;
     }
 }

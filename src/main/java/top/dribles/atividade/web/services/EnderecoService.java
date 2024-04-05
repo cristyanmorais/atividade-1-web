@@ -28,10 +28,7 @@ public class EnderecoService {
         return enderecoRepository.getEnderecoById(id);
     }
     
-    public Endereco adicionarEndereco(String logradouro, String numero, String complemento, 
-            String bairro, String cidade, String uf, String cep) throws SQLException {
-        
-        Endereco endereco = new Endereco(logradouro, numero, complemento, bairro, cidade, uf, cep);
+    public Endereco adicionarEndereco(Endereco endereco) throws SQLException {
         return enderecoRepository.adicionarEndereco(endereco);
     }
     

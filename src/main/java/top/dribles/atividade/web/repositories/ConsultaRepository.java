@@ -20,6 +20,8 @@ import top.dribles.atividade.web.model.Consulta;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 /**
  *
@@ -43,7 +45,7 @@ public class ConsultaRepository {
                     consulta.setId(rs.getInt("ID"));
                     consulta.setMedico_id(rs.getInt("MEDICO_ID"));
                     consulta.setPaciente_id(rs.getInt("PACIENTE_ID"));
-                    consulta.setData_hora(rs.getDate("DATA_HORA"));
+//                    consulta.setData_hora(rs.getLocalDateTime("DATA_HORA"));
                     return consulta;
                 }
             }
@@ -53,19 +55,66 @@ public class ConsultaRepository {
     }
     
     public Consulta adicionarConsulta(Consulta consulta) throws SQLException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = 
+                "INSERT INTO Consulta (MEDICO_ID, PACIENTE_ID, DATA_HORA) "
+                + "VALUES(?, ?, ?);";
         
-    // --------------------  Horário e Dia da Consulta  ----------------------
-        Date dataHoraConsulta = consulta.getData_hora();
-        LocalDateTime dataHora = convertDateToLocalDateTime(dataHoraConsulta);
+    // ------------------------  Medico Aleatorio  --------------------------- 
+        System.out.println("medico return: " + consulta.getMedico_id());
+        
+        if(consulta.getMedico_id() == 0) {
+            String qAux = "SELECT * FROM Medico ORDER BY RANDOM() LIMIT 1";
+            
+            try {
+                ps = conn.prepareStatement(qAux);
+                rs = ps.executeQuery();
+                
+                if(rs.next()) {
+                    consulta.setMedico_id(rs.getInt("ID"));
+                }
+            }catch (SQLException e) {
+                throw new IllegalArgumentException("Erro buscando Random");
+            } finally {
+                // Feche os recursos
+                try {
+                    if (rs != null) rs.close();
+                    if (ps != null) ps.close();
+                } catch (SQLException e) {
+                    throw new IllegalArgumentException("Erro fechando Random!");
+            }
+        }
+            
+            
+        }
+        
+    // --------------------  Horario e Dia da Consulta  ----------------------
+        Date data = consulta.getData();
+        LocalDate localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+        String horario = consulta.getHorario();
+        String[] partes = horario.split(":");
+        int hora = Integer.parseInt(partes[0]);
+        int minutos = Integer.parseInt(partes[1]);
+        
+        LocalTime localTime = LocalTime.of(hora, minutos);
+        LocalDateTime dataHora = localDate.atTime(localTime);
+        
+        System.out.println("dataHora: " + dataHora);
+        
+        Timestamp timestamp = Timestamp.valueOf(dataHora);
         
         DayOfWeek diaSemana = dataHora.getDayOfWeek();
-        LocalTime horaConsulta = dataHora.toLocalTime();
         
+        if (consulta.getData() == null) {
+            throw new IllegalArgumentException("consulta.getData() = null");
+        }
         
         if (diaSemana == DayOfWeek.SUNDAY) {
-            throw new IllegalArgumentException("A consulta não pode ser marcada para domingo.");
-        } else if (horaConsulta.isBefore(LocalTime.of(7, 0)) || horaConsulta.isAfter(LocalTime.of(19, 0))) {
-            throw new IllegalArgumentException("O horário da consulta deve estar entre 07:00 e 19:00.");
+            throw new IllegalArgumentException("A consulta nao pode ser marcada para domingo.");
+        } else if (hora < 07 && hora > 19) {
+            throw new IllegalArgumentException("O horario da consulta deve estar entre 07:00 e 19:00.");
         }
         
     // --------------------  Paciente e Medico Inativo  -----------------------
@@ -78,46 +127,41 @@ public class ConsultaRepository {
         boolean medicoIsActive = medico.getIs_active();
         
         if(!pacienteIsActive) {
-            throw new IllegalArgumentException("Paciente não encontrado!");
+            throw new IllegalArgumentException("Paciente nao encontrado!");
         }
         
         if(!medicoIsActive) {
-            throw new IllegalArgumentException("Medico não encontrado!");
+            throw new IllegalArgumentException("Medico nao encontrado!");
         }
         
     // --------------------  Disponibilidade de Horario  ----------------------
-        if(!horarioDisponivelMedico(consulta.getData_hora(), consulta.getMedico_id())) {
-            throw new IllegalArgumentException("Horario Não está Disponível!");
+        if(!horarioDisponivelMedico(timestamp, consulta.getMedico_id())) {
+            throw new IllegalArgumentException("Horario Nao esta Disponível!");
         }
         
-        if(!dataDisponivelPaciente(consulta.getData_hora(), consulta.getPaciente_id())) {
-            throw new IllegalArgumentException("Paciente já tem Consulta nessa Data!");
+        if(!dataDisponivelPaciente(timestamp, consulta.getPaciente_id())) {
+            throw new IllegalArgumentException("Paciente ja tem Consulta nessa Data!");
         }
         
-        Timestamp data_horaTS = new Timestamp(consulta.getData_hora().getTime());
-        Timestamp data_atualTS = new Timestamp(System.currentTimeMillis());
-        data_atualTS.setTime(data_atualTS.getTime() + 1800000);
+        Timestamp timestampAtual = new Timestamp(System.currentTimeMillis());
+        timestampAtual.setTime(timestampAtual.getTime() + 1800000);
         
-        if(data_horaTS.getTime() >= data_atualTS.getTime()) {
-            throw new IllegalArgumentException("A consulta precisa ser agendada a partir de meia hora do horário atual!");
+        if(timestamp.getTime() < timestampAtual.getTime()) {
+            throw new IllegalArgumentException("A consulta precisa ser agendada a partir de meia hora do horario atual!");
         }
         
     // -------------------------------  Query  --------------------------------
-        String query = 
-                "INSERT INTO Consulta (MEDICO_ID, PACIENTE_ID, DATA_HORA, MOTIVO_CANCELAMENTO_ID) "
-                + "VALUES(?, ?, ?, ?);";
         
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-                
         try {
-            java.sql.Date dataHoraSQL = new java.sql.Date(consulta.getData_hora().getTime());
+//            java.sql.Date dataHoraSQL = new java.sql.Date(consulta.getData_hora());
+//            LocalDateTime dataHoraConsulta = consulta.getData();
+
             ps = conn.prepareStatement(query, 
                     Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, consulta.getMedico_id());
             ps.setInt(2, consulta.getPaciente_id());
-            ps.setInt(3, consulta.getMotivo_cancelamento_id());
-            ps.setDate(4, dataHoraSQL);
+            ps.setTimestamp(3, timestamp);
+            
             ps.executeUpdate();
             
             rs = ps.getGeneratedKeys();
@@ -125,11 +169,8 @@ public class ConsultaRepository {
             rs.next();
             consulta.setId(rs.getInt(1));
             
-        } finally {
-            if (rs != null)
-                rs.close();
-            if (ps != null)
-                ps.close();
+        } catch (SQLException e) {
+            throw e;
         }
         
         return consulta;
@@ -139,63 +180,84 @@ public class ConsultaRepository {
         
     }
     
-//  ---------------------------------  Aux  -----------------------------------
-    
-    public LocalDateTime convertDateToLocalDateTime(Date date) {
-        // Convertendo para java.sql.Timestamp
-        Timestamp timestamp = new Timestamp(date.getTime());
-    
-        // Convertendo para LocalDateTime
-        return timestamp.toLocalDateTime();
+    public void close() throws SQLException {
+        if (conn != null)
+            conn.close();
     }
     
-    public boolean horarioDisponivelMedico(Date dataHora, int medico_id) {
+//  ---------------------------------  Aux  -----------------------------------
+    
+//    public LocalDateTime convertDateToLocalDateTime(Date date) {
+//        if (date == null) {
+//            throw new IllegalArgumentException("convertDateToLocalDateTime: date = null");
+//        }
+//        
+//        Timestamp timestamp = new Timestamp(date.getTime());
+//    
+//        return timestamp.toLocalDateTime();
+//    }
+    
+//    public int randomMedico() {
+//        Medico medico = null;
+//        
+//        String query = "SELECT * FROM Medico ORDER BY RAND() LIMIT 1";
+//        
+//        try (PreparedStatement ps = conn.prepareStatement(query)) {
+//            try (ResultSet rs = ps.executeQuery()) {
+//                if(rs.next()) {
+//                    medico.setId(rs.getInt("ID"));
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new IllegalArgumentException("doidera braba");
+//        } 
+//        
+//        return medico.getId();
+//    }
+    
+    public boolean horarioDisponivelMedico(Timestamp dataHora, int medico_id) {
+        
+        if (dataHora == null) {
+            throw new IllegalArgumentException("horarioDisponivelMedico: dataHora = null");
+        }
         
         String query = "SELECT * FROM Consulta WHERE (data_hora = ? OR (data_hora > ? AND data_hora <= ?)) AND medico_id = ?";
         
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            // Define o parâmetro da consulta com a data e hora fornecidas
-            ps.setTimestamp(1, new Timestamp(dataHora.getTime()));
-            ps.setTimestamp(2, new Timestamp(dataHora.getTime()));
-            ps.setTimestamp(3, new Timestamp(dataHora.getTime() + 3599999)); // Adiciona 1 hora à data fornecida
+            ps.setTimestamp(1, dataHora);
+            ps.setTimestamp(2, dataHora);
+            ps.setTimestamp(3, new Timestamp(dataHora.getTime() + 360000));
             ps.setInt(4, medico_id);
         
-            // Executa a consulta
             try (ResultSet rs = ps.executeQuery()) {
-                // Verifica se algum resultado foi retornado
                 if (rs.next()) {
-                    // Horário não está disponível
                     return false;
                 } else {
-                    // Horário está disponível
                     return true;
                 }
             }
         } catch (SQLException e) {
-            // Lida com exceções de SQL, se houver
             e.printStackTrace();
-            // Se ocorrer uma exceção, assume-se que o horário não está disponível por segurança
             return false;
         }
     }
     
-    public boolean dataDisponivelPaciente(Date dataHora, int paciente_id) {
+    public boolean dataDisponivelPaciente(Timestamp dataHora, int paciente_id) {
+        if (dataHora == null) {
+            throw new IllegalArgumentException("dataDisponivelPaciente: dataHora = null");
+        }
+        
         String query = "SELECT * FROM Consulta WHERE DATE(data_hora) = DATE(?) AND paciente_id = ?";
         
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            // Define o parâmetro da consulta com o dia da data fornecida
             ps.setDate(1, new java.sql.Date(dataHora.getTime()));
             ps.setInt(2, paciente_id);
     
-            // Executa a consulta
             try (ResultSet rs = ps.executeQuery()) {
-                // Verifica se algum resultado foi retornado
-                return !rs.next(); // Retorna verdadeiro se não houver resultados (horário disponível)
+                return !rs.next();
             }
         } catch (SQLException e) {
-            // Lida com exceções de SQL, se houver
             e.printStackTrace();
-            // Se ocorrer uma exceção, assume-se que o horário não está disponível por segurança
             return false;
         }
     }

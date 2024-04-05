@@ -13,6 +13,7 @@ import top.dribles.atividade.web.model.Endereco;
 import top.dribles.atividade.web.model.Especialidade;
 import top.dribles.atividade.web.model.Medico;
 import top.dribles.atividade.web.model.Paciente;
+import top.dribles.atividade.web.model.Consulta;
 
 /**
  *
@@ -20,6 +21,11 @@ import top.dribles.atividade.web.model.Paciente;
  */
 @WebService
 public interface WebServiceClinica {
+//  --------------------------  Consulta  -------------------------------------
+    
+    @WebMethod
+    Consulta adicionarConsulta(Consulta consulta) throws SQLException;
+    
 //  ----------------------------  Pessoa  -------------------------------------
     
     @WebMethod

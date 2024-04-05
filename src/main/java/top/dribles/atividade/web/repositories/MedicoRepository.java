@@ -40,7 +40,7 @@ public class MedicoRepository {
                 medico.setCrm(rs.getString("CRM"));
                 medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
                 
-                Pessoa pessoa = pessoaRepository.getPessoaById(medico.getPessoa().getId());
+                Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
                 medico.setPessoa(pessoa);
                 
                 medicos.add(medico);
@@ -64,18 +64,20 @@ public class MedicoRepository {
                     medico.setCrm(rs.getString("CRM"));
                     medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
                     
-//                    if(medico.getPessoa() != null) {
+                    if(medico.getIs_active()) {
                         Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
                         medico.setPessoa(pessoa);
-//                    } else {
-//                        throw new IllegalArgumentException("Erro ao obter Pessoa!");
-//                    }
+                    } else {
+                        throw new IllegalArgumentException("Medico Inativo!");
+                    }
                         
                     return medico;
                 } else {
                     throw new IllegalArgumentException("Médico não encontrado!");
                 }
             }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao Buscar Medico");
         }
     }
     

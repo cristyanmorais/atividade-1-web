@@ -30,7 +30,7 @@ public class PacienteRepository {
     
     public ArrayList<Paciente> getAllPacientes() throws SQLException {
         ArrayList<Paciente> pacientes = new ArrayList<>();
-        String query = "SELECT * FROM Paciente";
+        String query = "SELECT * FROM Paciente WHERE is_active = true";
     
         try (PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery()) {
@@ -38,7 +38,7 @@ public class PacienteRepository {
                 Paciente paciente = new Paciente();
                 paciente.setId(rs.getInt("ID"));
                 
-                Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
+                Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
                 paciente.setPessoa(pessoa);
                 
                 pacientes.add(paciente);
@@ -61,8 +61,12 @@ public class PacienteRepository {
                     paciente.setId(rs.getInt("ID"));
                     paciente.setIs_active(rs.getBoolean("IS_ACTIVE"));
                     
-                    Pessoa pessoa = pessoaRepository.getPessoaById(paciente.getPessoa().getId());
-                    paciente.setPessoa(pessoa);
+                    if(paciente.getIs_active()) {
+                        Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
+                        paciente.setPessoa(pessoa);
+                    } else {
+                        throw new IllegalArgumentException("Paciente Inativo!");
+                    }
                 
                     return paciente;
                 }else {

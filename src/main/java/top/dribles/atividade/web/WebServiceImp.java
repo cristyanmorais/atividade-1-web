@@ -13,11 +13,13 @@ import top.dribles.atividade.web.model.Especialidade;
 import top.dribles.atividade.web.model.Endereco;
 import top.dribles.atividade.web.model.Medico;
 import top.dribles.atividade.web.model.Paciente;
+import top.dribles.atividade.web.model.Consulta;
 import top.dribles.atividade.web.services.EnderecoService;
 import top.dribles.atividade.web.services.EspecialidadeService;
 import top.dribles.atividade.web.services.MedicoService;
 import top.dribles.atividade.web.services.PacienteService;
 import top.dribles.atividade.web.services.PessoaService;
+import top.dribles.atividade.web.services.ConsultaService;
 
 /**
  *
@@ -31,6 +33,7 @@ public class WebServiceImp implements WebServiceClinica{
     private final PessoaService pessoaService;
     private final MedicoService medicoService;
     private final PacienteService pacienteService;
+    private final ConsultaService consultaService;
     
     public WebServiceImp() throws SQLException {
         this.enderecoService = new EnderecoService();
@@ -38,6 +41,14 @@ public class WebServiceImp implements WebServiceClinica{
         this.pessoaService = new PessoaService();
         this.medicoService = new MedicoService();
         this.pacienteService = new PacienteService();
+        this.consultaService = new ConsultaService();
+    }
+    
+//  ----------------------------  Consulta  -----------------------------------
+    
+    @Override
+    public Consulta adicionarConsulta(Consulta consulta) throws SQLException {
+        return consultaService.adicionarConsulta(consulta);
     }
     
 //  ------------------------------  Pessoa  -----------------------------------
@@ -125,9 +136,7 @@ public class WebServiceImp implements WebServiceClinica{
     
     @Override
     public Endereco adicionarEndereco(Endereco endereco) throws SQLException {
-        return enderecoService.adicionarEndereco(endereco.getLogradouro(), endereco.getNumero(), 
-                endereco.getComplemento(), endereco.getBairro(), endereco.getCidade(), 
-                endereco.getUf(), endereco.getCep());
+        return enderecoService.adicionarEndereco(endereco);
     }
     
     @Override
