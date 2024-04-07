@@ -26,6 +26,9 @@ public interface WebServiceClinica {
     @WebMethod
     Consulta adicionarConsulta(Consulta consulta) throws SQLException;
     
+    @WebMethod
+    void cancelarConsulta(int idCancelamento, int idConsulta) throws SQLException;
+    
 //  ----------------------------  Pessoa  -------------------------------------
     
     @WebMethod

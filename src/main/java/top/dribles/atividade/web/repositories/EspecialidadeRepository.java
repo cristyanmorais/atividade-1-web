@@ -37,7 +37,9 @@ public class EspecialidadeRepository {
                 especialidade.setNome(rs.getString("NOME"));
                 especialidades.add(especialidade);
             }
-        }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao buscar Especialidades!");
+        } 
     
         return especialidades;
     }
@@ -54,7 +56,9 @@ public class EspecialidadeRepository {
                     especialidade.setNome(rs.getString("NOME"));
                     return especialidade;
                 }
-            }
+            } catch (SQLException e) {
+                throw new IllegalArgumentException("Erro ao buscar Especialidade!");
+            } 
         }
     
         return null;
@@ -95,7 +99,9 @@ public class EspecialidadeRepository {
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id);
             ps.executeUpdate();
-        }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao deletar Especialidade!");
+        } 
     }
     
     public void close() throws SQLException {

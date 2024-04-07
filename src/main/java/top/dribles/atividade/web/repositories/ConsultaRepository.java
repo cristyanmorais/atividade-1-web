@@ -18,6 +18,7 @@ import top.dribles.atividade.web.model.Medico;
 import top.dribles.atividade.web.model.Consulta;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.LocalDate;
@@ -45,10 +46,26 @@ public class ConsultaRepository {
                     consulta.setId(rs.getInt("ID"));
                     consulta.setMedico_id(rs.getInt("MEDICO_ID"));
                     consulta.setPaciente_id(rs.getInt("PACIENTE_ID"));
-//                    consulta.setData_hora(rs.getLocalDateTime("DATA_HORA"));
+                    consulta.setData(rs.getDate("DATA_HORA"));
+                    consulta.setIs_active(rs.getBoolean("IS_ACTIVE"));
+//                    consulta.setHorario(rs.getString("DATA_HORA"));
+                // Obtém o objeto Timestamp do banco de dados
+                java.sql.Timestamp timestamp = rs.getTimestamp("DATA_HORA");
+                
+                // Converte o Timestamp para um objeto Date
+                java.util.Date date = new java.util.Date(timestamp.getTime());
+                
+                // Formata apenas a parte de hora e minutos
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
+                String horaMinutos = sdf.format(date);
+                
+                consulta.setHorario(horaMinutos);
+                
+                // Defina a data completa (incluindo data e hora) como um objeto java.util.Date
+                consulta.setData(date);
                     return consulta;
                 }
-            }
+            } 
         }
     
         return null;
@@ -77,14 +94,13 @@ public class ConsultaRepository {
             }catch (SQLException e) {
                 throw new IllegalArgumentException("Erro buscando Random");
             } finally {
-                // Feche os recursos
                 try {
                     if (rs != null) rs.close();
                     if (ps != null) ps.close();
                 } catch (SQLException e) {
                     throw new IllegalArgumentException("Erro fechando Random!");
+                }
             }
-        }
             
             
         }
@@ -171,12 +187,71 @@ public class ConsultaRepository {
             
         } catch (SQLException e) {
             throw e;
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                throw new IllegalArgumentException("Erro fechando Add Consulta!");
+            }
         }
-        
         return consulta;
     }
     
-    public void cancelarConsulta(int id) throws SQLException {
+    public void cancelarConsulta(int idCancelamento, int idConsulta) throws SQLException {
+        String query = "UPDATE Consulta SET cancelamento_id = ?, is_active = false "
+                + "WHERE ID = ?";
+        
+        if(idConsulta <= 0) {
+            throw new IllegalArgumentException("Necessario informar consulta!");
+        }
+        
+        if(idCancelamento <= 0) {
+            throw new IllegalArgumentException("Necessario informar motivo de cancelamento!");
+        }
+        
+        Consulta consulta = getConsultaById(idConsulta);
+        
+        if(!consulta.getIs_active()) {
+            throw new IllegalArgumentException("Consulta ja cancelada");
+        }
+        
+//   -----------------------------------------------------------------------------           
+        
+        Date data = consulta.getData();
+        LocalDate localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+        String horario = consulta.getHorario();
+        String[] partes = horario.split(":");
+        int hora = Integer.parseInt(partes[0]);
+        int minutos = Integer.parseInt(partes[1]);
+        
+        LocalTime localTime = LocalTime.of(hora, minutos);
+        LocalDateTime dataHora = localDate.atTime(localTime);
+        
+        Timestamp tsAtual = new Timestamp(System.currentTimeMillis());
+        Timestamp tsConsulta =  Timestamp.valueOf(dataHora);
+//        timestampAtual.setTime(timestampAtual.getTime() + 1800000);
+
+        Duration diff = Duration.between(tsAtual.toLocalDateTime(), tsConsulta.toLocalDateTime());
+        
+        if (diff.toHours() < 24) {
+            throw new IllegalArgumentException("Consulta nao pode ser cancelada faltando 24 horas ou menos");
+        }
+
+//        System.out.println("| tsAtual: " + tsAtual.getTime());
+//        System.out.println("| tsConsulta: " + tsConsulta.getTime());
+
+//  -----------------------------------------------------------------------------      
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, idCancelamento);
+            ps.setInt(2, idConsulta);
+            try (ResultSet rs = ps.executeQuery()) {
+                
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
         
     }
     

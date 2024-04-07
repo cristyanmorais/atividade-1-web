@@ -43,6 +43,8 @@ public class EnderecoRepository {
                 endereco.setCep(rs.getString("CEP"));
                 enderecos.add(endereco);
             }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Erro ao buscar Enderecos!");
         }
     
         return enderecos;
@@ -125,7 +127,7 @@ public class EnderecoRepository {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalArgumentException("Erro ao atuaizar Endereco no banco de dados!");
-        }
+        } 
     }
     
     public void close() throws SQLException {

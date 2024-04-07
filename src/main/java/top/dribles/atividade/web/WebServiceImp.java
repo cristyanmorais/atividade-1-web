@@ -51,6 +51,11 @@ public class WebServiceImp implements WebServiceClinica{
         return consultaService.adicionarConsulta(consulta);
     }
     
+    @Override
+    public void cancelarConsulta(int idCancelamento, int idConsulta) throws SQLException {
+        consultaService.cancelarConsulta(idConsulta, idCancelamento);
+    }
+    
 //  ------------------------------  Pessoa  -----------------------------------
    
     @Override

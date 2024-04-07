@@ -22,4 +22,8 @@ public class ConsultaService {
     public Consulta adicionarConsulta(Consulta consulta) throws SQLException {
         return consultaRepository.adicionarConsulta(consulta);
     }
+    
+    public void cancelarConsulta(int idCancelamento, int idConsulta) throws SQLException {
+        consultaRepository.cancelarConsulta(idConsulta, idCancelamento);
+    }
 }
