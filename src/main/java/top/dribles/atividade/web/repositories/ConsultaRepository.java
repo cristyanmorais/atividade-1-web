@@ -49,19 +49,16 @@ public class ConsultaRepository {
                     consulta.setData(rs.getDate("DATA_HORA"));
                     consulta.setIs_active(rs.getBoolean("IS_ACTIVE"));
 //                    consulta.setHorario(rs.getString("DATA_HORA"));
-                // Obtém o objeto Timestamp do banco de dados
+
                 java.sql.Timestamp timestamp = rs.getTimestamp("DATA_HORA");
                 
-                // Converte o Timestamp para um objeto Date
                 java.util.Date date = new java.util.Date(timestamp.getTime());
                 
-                // Formata apenas a parte de hora e minutos
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
                 String horaMinutos = sdf.format(date);
                 
                 consulta.setHorario(horaMinutos);
                 
-                // Defina a data completa (incluindo data e hora) como um objeto java.util.Date
                 consulta.setData(date);
                     return consulta;
                 }

@@ -14,6 +14,7 @@ import top.dribles.atividade.web.infrastructure.ConnectionFactory;
 import top.dribles.atividade.web.model.Medico;
 import top.dribles.atividade.web.model.Pessoa;
 import top.dribles.atividade.web.model.Endereco;
+import top.dribles.atividade.web.model.Especialidade;
 
 /**
  *
@@ -27,10 +28,16 @@ public class MedicoRepository {
     }
     
     public PessoaRepository pessoaRepository = new PessoaRepository();
+    public EspecialidadeRepository especialidadeRepository = new EspecialidadeRepository();
     
     public ArrayList<Medico> getAllMedicos() throws SQLException {
         ArrayList<Medico> medicos = new ArrayList<>();
-        String query = "SELECT * FROM Medico WHERE is_active = true";
+//        String query = "SELECT * FROM Medico WHERE is_active = true";
+            String query = "SELECT m.*, p.nome AS pessoa_nome, p.email AS pessoa_email " +
+                   "FROM Medico m " +
+                   "INNER JOIN Pessoa p ON m.pessoa_id = p.id " +
+                   "WHERE m.is_active = true " +
+                   "ORDER BY p.nome ASC"; 
     
         try (PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery()) {
@@ -39,9 +46,16 @@ public class MedicoRepository {
                 medico.setId(rs.getInt("ID"));
                 medico.setCrm(rs.getString("CRM"));
                 medico.setIs_active(rs.getBoolean("IS_ACTIVE"));
+                medico.setLista_nome(rs.getString("pessoa_nome"));
+                medico.setLista_email(rs.getString("pessoa_email"));
                 
-                Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
-                medico.setPessoa(pessoa);
+//                Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
+//                medico.setPessoa(pessoa);
+//                medico.setLista_nome(pessoa.getNome());
+//                medico.setLista_email(pessoa.getEmail());
+                
+                Especialidade especialidade = especialidadeRepository.getEspecialidadeById(rs.getInt("ESPECIALIDADE_ID"));
+                medico.setLista_especialidade(especialidade.getNome());
                 
                 medicos.add(medico);
             }

@@ -30,16 +30,24 @@ public class PacienteRepository {
     
     public ArrayList<Paciente> getAllPacientes() throws SQLException {
         ArrayList<Paciente> pacientes = new ArrayList<>();
-        String query = "SELECT * FROM Paciente WHERE is_active = true";
+//        String query = "SELECT * FROM Paciente WHERE is_active = true";
+
+            String query = "SELECT pa.*, pe.nome AS pessoa_nome, pe.email AS pessoa_email, pe.cpf AS pessoa_cpf " +
+                   "FROM Paciente pa " +
+                   "INNER JOIN Pessoa pe ON pa.pessoa_id = pe.id " +
+                   "WHERE pa.is_active = true " +
+                   "ORDER BY pe.nome ASC";
     
         try (PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Paciente paciente = new Paciente();
                 paciente.setId(rs.getInt("ID"));
+                paciente.setIs_active(rs.getBoolean("IS_ACTIVE"));
                 
-                Pessoa pessoa = pessoaRepository.getPessoaById(rs.getInt("PESSOA_ID"));
-                paciente.setPessoa(pessoa);
+                paciente.setLista_nome(rs.getString("pessoa_nome"));
+                paciente.setLista_email(rs.getString("pessoa_email"));
+                paciente.setLista_cpf(rs.getString("pessoa_cpf"));
                 
                 pacientes.add(paciente);
             }

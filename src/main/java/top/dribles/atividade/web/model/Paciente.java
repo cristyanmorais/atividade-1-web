@@ -12,6 +12,10 @@ public class Paciente {
     private int id;
     private Pessoa pessoa;
     private boolean is_active;
+    
+    private String lista_nome;
+    private String lista_email;
+    private String lista_cpf;
 
     public Paciente() {
         
@@ -48,5 +52,29 @@ public class Paciente {
 
     public void setIs_active(boolean is_active) {
         this.is_active = is_active;
+    }
+
+    public String getLista_nome() {
+        return lista_nome;
+    }
+
+    public void setLista_nome(String lista_nome) {
+        this.lista_nome = lista_nome;
+    }
+
+    public String getLista_email() {
+        return lista_email;
+    }
+
+    public void setLista_email(String lista_email) {
+        this.lista_email = lista_email;
+    }
+
+    public String getLista_cpf() {
+        return lista_cpf;
+    }
+
+    public void setLista_cpf(String lista_cpf) {
+        this.lista_cpf = lista_cpf;
     }
 }
