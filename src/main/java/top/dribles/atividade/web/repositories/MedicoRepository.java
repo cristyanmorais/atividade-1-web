@@ -96,7 +96,7 @@ public class MedicoRepository {
     }
     
     public Medico adicionarMedico(Medico medico) throws SQLException {
-        if (medico.getEspecialidade() == null || medico.getEspecialidade().getId() <= 0) {
+        if (medico.getEspecialidade().getId() <= 0) {
             throw new IllegalArgumentException("Especialidade inválida para o médico.");
         }
     

@@ -209,7 +209,7 @@ public class ConsultaRepository {
         
         Consulta consulta = getConsultaById(idConsulta);
         
-        if(!consulta.getIs_active()) {
+        if(consulta.getIs_active() == false) {
             throw new IllegalArgumentException("Consulta ja cancelada");
         }
         
